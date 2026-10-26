@@ -8,8 +8,10 @@
 {geometry}
 
 \input{mymacro}
-\title{}
-\author{Yongli He, }
+\title{Investigating reduced-FOV perfusion FMRI using 
+velocity selective inversion ASL with outer-volume suppression
+}
+\author{Yongli He, Jon-Fredrik Nielsen, Luis Hernandez-Garcia}
 \date{}
 
 \begin{document}
@@ -30,9 +32,62 @@
 
 \newpage
 \section{Introduction}
+Velocity selective arterial spin labeling (VS-ASL) has been an attractive option 
+for perfusion imaging because of its insensitivity to arterial transit time[cite],
+which offers potential SNR gain and quantification bias reduction
+compared to conventional spatial selective counterparts (e.g., PCASL[cite]).
 
+Compared to BOLD fMRI, perfusion signal can quantify cerebral blood flow (CBF), 
+providing higher spatial specificity to individual cortical column 
+where GRE-BOLD tends to be confounded by venous contamination[Duong et al 2001].
+This makes it attractive to laminar fMRI,
+which to date is still limited in 7T and requires 
+vascular contrasts such as VASO[Huber et al 2017].
 
+Here we present reduced-FOV VSASL fMRI with 
+tailored 2D outer-volume-suppresion (OVS) pulse. 
+We hypothesize that OVS permits an accelerated readout with reduced under-sampling aliasing,
+and reduces variance in the region of interest (ROI).
+This work paves way for a long term goal of 
+achieving laminar perfusion fMRI in 3T. 
 \section{Methods}
+\subsection{Sequence}
+Each TR (Fig.~1a) comprises a $90^\circ$ presaturation, recovery delay D0, 
+the velocity-selective label, two background-suppression (BGS) inversions,
+a vascular crusher, an OVS prep train, and a stack-of-spirals (SoS) readout.
+
+Labeling uses the FT-VSI pulse of Qin et al~\cite{qin2016velocity}
+(Fig.~1b), with its velocity-encoding gradient scaled
+to a cutoff velocity $V_c=2$~cm/s (15~mT/m). 
+A BIR-8 velocity-selective saturation crusher (Fig.~1c) 
+suppresses residual intravascular label with the same $V_c$. 
+Two adiabatic sech inversions are inserted during post labeling delay (PLD)
+as background suppresion (BGS).
+We optimize the BGS timing D1-D3 as described in the next section.
+
+The tailored 2D OVS pulse~\cite{he2026improved} (Fig.~1d) precedes every readout
+excitation; because its suppression requires several repetitions to reach steady
+state, five OVS-prep modules precede the readout train. The readout (Fig.~1e) is an
+RF-spoiled SPGR SoS acquisition with a constant $10^\circ$ flip angle.
+
+\subsection{Optimization of timing parameters}
+D1 and D2 were chosen to null static CSF at readout~\cite{hu2026csf}, 
+using a Bloch-free longitudinal-recovery model (Figure 2)
+with $T_1$ = 4.3/1.2/0.8~s for CSF/GM/WM at 3~T[cite]. 
+Each adiabatic inversion was assumed 90\% efficient, and the
+FT-VSI label was assumed to invert static spins to $M_z=-0.81$; 
+the velocity-selective modules were assumed not to otherwise attenuate static magnetization. 
+D0 = 2~s and PLD = 1.4~s were fixed. 
+We then minimized the residual $M_z$ of CSF, 
+with GM and WM suppression as a secondary term,
+over D1, D2 $\geq$ 20~ms by multi-start Nelder--Mead, 
+subject to D3 $\geq$ 10~ms so
+the crusher and OVS-prep train still fit inside the PLD, 
+which caps D1\,+\,D2 at 1.307~s.
+The optimum was D1 = 1.157~s, D2 = 0.149~s (D3 = 10~ms), 
+predicting $M_z/M_0$ of
+$-0.004$, $+0.22$ and $+0.33$ for CSF, GM and WM at readout (Fig.~2).
+\subsection{FMRI experiments}
 
 
 \section{Results}
