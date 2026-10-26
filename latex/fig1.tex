@@ -1,0 +1,37 @@
+% Figure 1: (a) VSASL sequence diagram on top; (b)-(e) zoom-in views of the label pulse,
+% vascular crusher, OVSprep and one readout shot below, linked to their blocks by dashed lines.
+% Build (from latex/): pdflatex -output-directory=../figures_assembled fig1.tex
+\documentclass[tikz,border=2pt]{standalone}
+\usepackage{graphicx}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usetikzlibrary{arrows.meta}
+\input{seq_colors}
+
+% zoom-in row spans the diagram's width (pixel cols 28..1365 at 0.0121 cm/px)
+\def\xl{0.339}   % left edge (cm)
+% panel widths (cm) are in the \foreach list; they match panelW in ../matlab/figures_generate.m
+\def\pg{0.25}    % gap between panels (cm)
+\def\ytop{-3.4}  % top of the panels (cm); block bottoms sit at -2.08 cm
+\def\hd{0.4cm}   % header above each panel for its letter
+
+\begin{document}
+\begin{tikzpicture}
+  \input{seq_diagm_body}
+
+  % zoom-in panels, top-aligned, left to right: name, block id, block color, image, width (cm)
+  \foreach \n/\id/\c/\img/\w [remember=\xr as \xa (initially \xl)] in
+      {b/label/clabel/zoomin_label_pulse/4.5, c/vasc/cvasc/zoomin_vasc_pulse/3.22,
+       d/ovs/covs/zoomin_ovsprep/3.86, e/ro/cread/zoomin_readout/3.86} {
+    \node[anchor=north west, inner sep=0] (\n) at (\xa,\ytop)
+      {\includegraphics[width=\w cm]{../figures/\img.png}};
+    \pgfmathsetmacro{\xr}{\xa+\w+\pg}   % left edge of the next panel
+    % lines end \hd above the panel so the panel letter sits inside the zoom wedge;
+    % lines and letter in a saturated shade of the block's fill
+    \draw[\c dk, densely dashed, line width=0.6pt]
+      (\id-sw) -- ([yshift=\hd]\n.north west) (\id-se) -- ([yshift=\hd]\n.north east);
+    \node[anchor=north west, font=\bfseries, text=\c dk, inner sep=0] at ([yshift=\hd]\n.north west) {(\n)};
+  }
+  \node[anchor=north west, font=\bfseries, inner sep=0] at (\xl,0) {(a)};
+\end{tikzpicture}
+\end{document}

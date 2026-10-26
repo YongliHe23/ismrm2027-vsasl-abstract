@@ -1,0 +1,40 @@
+% VSASL sequence timing diagram body, \input inside a tikzpicture by seq_diagm.tex and fig1.tex.
+% Redrawn from ../figures/vsasl_seq_illustration.png; x = its pixel columns, y grows downward.
+% Defines coordinates (<id>-sw) and (<id>-se) at the bottom corners of each block,
+% id = presat, label, inv1, inv2, vasc, ovs, ro.
+\begin{scope}[x=0.0121cm, y=-0.0121cm,
+    blk/.style={draw=gray!80!black, line width=0.6pt},
+    guide/.style={gray, line width=0.5pt},
+    dim/.style={{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}, gray!40!black, line width=0.6pt}]
+  \def\yt{130} \def\yb{172}   % top/bottom of the pulse blocks
+  \draw[line width=0.8pt] (118,\yb) -- (1365,\yb);
+
+  % pulse blocks: id, left, right, fill, label
+  \foreach \id/\xa/\xb/\c/\lab in {presat/28/118/cgray/presat, label/308/398/clabel/label,
+      inv1/459/532/cgray/Inv1, inv2/754/827/cgray/Inv2, vasc/907/1029/cvasc/vasc., ro/1150/1313/cread/Readout} {
+    \draw[blk, fill=\c] (\xa,\yt) rectangle (\xb,\yb);
+    \node[font=\small] at ({(\xa+\xb)/2},{(\yt+\yb)/2}) {\lab};
+    \coordinate (\id-sw) at (\xa,\yb);
+    \coordinate (\id-se) at (\xb,\yb);
+  }
+  % optional OVS prep: dashed outline
+  \fill[covs] (1029,\yt) rectangle (1150,\yb);
+  \draw[blk, densely dashed] (1029,\yt) rectangle (1150,\yb);
+  \node[font=\small] at (1089.5,{(\yt+\yb)/2}) {OVSprep};
+  \coordinate (ovs-sw) at (1029,\yb);
+  \coordinate (ovs-se) at (1150,\yb);
+
+  % timing guides up from block edges: short tier for D1-D3, tall tier for D0/PLD
+  \foreach \x in {459, 532, 754, 827, 907} \draw[guide] (\x,\yt) -- (\x,85);
+  \foreach \x in {118, 308, 398, 1150} \draw[guide] (\x,\yt) -- (\x,30);
+
+  % delays
+  \foreach \xa/\xb/\lab in {398/459/D1, 532/754/D2, 827/907/D3} {
+    \draw[dim] (\xa,105) -- (\xb,105);
+    \node[anchor=south, font=\small] at ({(\xa+\xb)/2},100) {\lab};
+  }
+  \draw[dim] (118,45) -- (308,45);
+  \node[anchor=south, font=\small] at (213,40) {D0};
+  \draw[dim] (398,45) -- (1150,45);
+  \node[anchor=south, font=\small] at (774,40) {PLD};
+\end{scope}

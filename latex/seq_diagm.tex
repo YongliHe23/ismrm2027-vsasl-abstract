@@ -1,0 +1,13 @@
+% VSASL sequence timing diagram (drawing in seq_diagm_body.tex)
+% Build (from latex/): pdflatex -output-directory=../figures_assembled seq_diagm.tex
+\documentclass[tikz,border=2pt]{standalone}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usetikzlibrary{arrows.meta}
+\input{seq_colors}
+
+\begin{document}
+\begin{tikzpicture}
+  \input{seq_diagm_body}
+\end{tikzpicture}
+\end{document}
