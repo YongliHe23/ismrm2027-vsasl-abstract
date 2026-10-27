@@ -80,7 +80,7 @@ the velocity-selective modules were assumed not to otherwise attenuate static ma
 D0 = 2~s and PLD = 1.4~s were fixed. 
 We then minimized the residual $M_z$ of CSF, 
 with GM and WM suppression as a secondary term,
-over D1, D2 $\geq$ 20~ms by multi-start Nelder--Mead, 
+over D1, D2 $\geq$ 20~ms, 
 subject to D3 $\geq$ 10~ms so
 the crusher and OVS-prep train still fit inside the PLD, 
 which caps D1\,+\,D2 at 1.307~s.
@@ -88,6 +88,36 @@ The optimum was D1 = 1.157~s, D2 = 0.149~s (D3 = 10~ms),
 predicting $M_z/M_0$ of
 $-0.004$, $+0.22$ and $+0.33$ for CSF, GM and WM at readout (Fig.~2).
 \subsection{FMRI experiments}
+One healthy volunteer was scanned on a 3~T GE MR750 scanner
+with Nova 32-channel head coil, 
+under IRB approval.
+Each of two protocols was run with and without OVS in a single session:
+\begin{itemize}
+  \item \textbf{Low-res}: 3.75~mm isotropic,
+  FOV $24\times24\times6$~cm ($64\times64\times16$),
+  one fully sampled spiral per $k_z$ partition
+  (16 shots, 20.9~ms readout), TE = 1.7~ms, 4.0~s per image.
+  \item \textbf{High-res}: $1.5\times1.5\times3.75$~mm,
+  FOV $19.2\times19.2\times4.5$~cm ($128\times128\times12$),
+  2-interleave spiral undersampled by $R=2$ in-plane acceleration
+  (12 shots, 33.2~ms readout), TE = 1.7~ms, 4.0~s per image.
+\end{itemize}
+The OVS pulse was designed with an inner-volume with diameter of 4~cm~\cite{he2026improved}.  
+Images were coil-combined by root-sum-of-squares without parallel-imaging
+reconstruction.
+
+The visual stimulus was a flashing checkerboard in a block design
+(40~s off / 40~s on, 5 cycles).
+Each run was then processed voxelwise as follows:
+(1) in-plane Gaussian smoothing (FWHM = 8.8~mm/3.5~mm for low-/high-res);
+(2) third-order polynomial detrending;
+(3) outlier removal (\pm 1.5 SD);
+(4) surround subtraction[cite].
+The mean perfusion-weighted image,
+normalized to the maximum control signal, is shown in Fig.~3a/4a.
+Activation was mapped by a GLM on the linearly detrended perfusion series,
+with a constant and the stimulus boxcar convolved with the SPM canonical HRF as regressors;
+t-scores of the stimulus regressor are shown in Fig.~3b/4b.
 
 
 \section{Results}

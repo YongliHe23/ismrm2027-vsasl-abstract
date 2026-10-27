@@ -1,5 +1,6 @@
 % VSASL sequence timing diagram body, \input inside a tikzpicture by seq_diagm.tex and fig1.tex.
 % Redrawn from ../figures/vsasl_seq_illustration.png; x = its pixel columns, y grows downward.
+% Not to scale: Inv1/Inv2 are moved so D1 > D2 > D3, the order of the real delays.
 % Defines coordinates (<id>-sw) and (<id>-se) at the bottom corners of each block,
 % id = presat, label, inv1, inv2, vasc, ovs, ro.
 \begin{scope}[x=0.0121cm, y=-0.0121cm,
@@ -11,7 +12,7 @@
 
   % pulse blocks: id, left, right, fill, label
   \foreach \id/\xa/\xb/\c/\lab in {presat/28/118/cgray/presat, label/308/398/clabel/label,
-      inv1/459/532/cgray/Inv1, inv2/754/827/cgray/Inv2, vasc/907/1029/cvasc/vasc., ro/1150/1313/cread/Readout} {
+      inv1/598/671/cgray/Inv1, inv2/774/847/cgray/Inv2, vasc/907/1029/cvasc/vasc., ro/1150/1313/cread/Readout} {
     \draw[blk, fill=\c] (\xa,\yt) rectangle (\xb,\yb);
     \node[font=\small] at ({(\xa+\xb)/2},{(\yt+\yb)/2}) {\lab};
     \coordinate (\id-sw) at (\xa,\yb);
@@ -25,11 +26,11 @@
   \coordinate (ovs-se) at (1150,\yb);
 
   % timing guides up from block edges: short tier for D1-D3, tall tier for D0/PLD
-  \foreach \x in {459, 532, 754, 827, 907} \draw[guide] (\x,\yt) -- (\x,85);
+  \foreach \x in {598, 671, 774, 847, 907} \draw[guide] (\x,\yt) -- (\x,85);
   \foreach \x in {118, 308, 398, 1150} \draw[guide] (\x,\yt) -- (\x,30);
 
   % delays
-  \foreach \xa/\xb/\lab in {398/459/D1, 532/754/D2, 827/907/D3} {
+  \foreach \xa/\xb/\lab in {398/598/D1, 671/774/D2, 847/907/D3} {
     \draw[dim] (\xa,105) -- (\xb,105);
     \node[anchor=south, font=\small] at ({(\xa+\xb)/2},100) {\lab};
   }

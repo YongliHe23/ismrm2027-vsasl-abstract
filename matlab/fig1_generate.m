@@ -106,7 +106,7 @@ GRO = cellfun(@(w) w(2,:)/gam*1e3, ro_wav(1:3), 'UniformOutput', false); %mT/m
 fig = figure('Position',[100 100 700 600]);
 tl = tiledlayout(5,1,'TileSpacing','tight','Padding','compact');
 clear ax
-ax(1) = nexttile; plot(t_ch{4},abs(B1RO),'k','LineWidth',1.2); title('Readout (\times 16)','Interpreter','tex')
+ax(1) = nexttile; plot(t_ch{4},abs(B1RO),'k','LineWidth',1.2); title('Readout (\times N_z)','Interpreter','tex')
 ax(2) = nexttile; plot(t_ch{4},angle(B1RO),'Color',[.65 .65 .65],'LineWidth',0.6);
 ylim([-pi pi]); yticks([-pi 0 pi]); yticklabels({'-\pi','0','\pi'});
 for k = 1:3

@@ -15,6 +15,7 @@ L.cbGap = 0.25; L.cbW = 0.35; L.cbRoom = 1.3;   % colorbar offset, width, room f
 %% overlayview
 cbar_tscore = [4,8];
 fig = panelFigure(L, nMethod);
+clear axs
 for k = 1:nMethod
     name = names{k};
     MATFILE = load([R.(name).output_dir 'ims_asl.mat']); %load perfusion image before smooth for underlay
@@ -25,7 +26,10 @@ for k = 1:nMethod
         img = flip(MATFILE.imsos,2);
     end
     undlay = abs(img(:,:,:,3)); % 2nd tag
-    msk = undlay > prctile(undlay(:),99.9)*0.2;
+    if k==1
+        msk = undlay > prctile(undlay(:),99.9)*0.2; 
+        %figure;im(msk); title('mask')
+    end 
 
     cbar_und = [min(abs(undlay(:))),max(abs(undlay(:)))];
     ov1 = overlayview;
@@ -33,33 +37,34 @@ for k = 1:nMethod
     ov1.addlayer(undlay,'caxis',cbar_und,'cloc',[]);
     ov1.addlayer(R.(name).tmap,'caxis',cbar_tscore,'cmap','hot','name','t-score','mask',msk,'cloc',[]);
 
-    ax = montageAxes(fig, L, k);
+    ax = montageAxes(fig, L, k); axs(k) = ax;
     ov1.show('viewargs',{'row',4,'notick'});
     title(ax,'');
     cornerLabel(ax, name);
 end
 % composite colormap: layer 1 (underlay) maps to [0 1], layer 2 (t-score) to [1 2]
-cb = sharedColorbar(ax, L, nMethod);
+cb = sharedColorbar(ax, L);
 cb.Limits = [1 2];
 cb.Ticks = linspace(1,2,3);
 cb.TickLabels = linspace(cbar_tscore(1),cbar_tscore(2),3);
 cb.Label.String = 't-score';
-sgtitle(fig,'Activation Maps','FontWeight','bold');
+jointTitle(fig, axs, 'Activation Maps');
 exportPanel(fig,[png_saveroot 'fig3_overlay.png'],fontSz);
 
 %% mean of sub
 fig = panelFigure(L, nMethod);
+clear axs
 for k = 1:nMethod
     name = names{k};
-    ax = montageAxes(fig, L, k);
+    ax = montageAxes(fig, L, k); axs(k) = ax;
     im('notick',mean(R.(name).sub/R.(name).ctrlmax, 4), 2e-2*[0 1]);
     colormap(ax,hot);
     title(ax,'');
     cornerLabel(ax, name);
 end
-cb = sharedColorbar(ax, L, nMethod);
+cb = sharedColorbar(ax, L);
 cb.Ticks = linspace(cb.Limits(1),cb.Limits(2),6);
-sgtitle(fig,'Subtraction Mean (Fractional)','FontWeight','bold');
+jointTitle(fig, axs, 'Subtraction Mean (Fractional)');
 exportPanel(fig,[png_saveroot 'fig3_subtraction_mean.png'],fontSz);
 
 %%
@@ -80,11 +85,30 @@ function ax = montageAxes(fig, L, k)
 ax = axes(fig,'Units','centimeters','Position',[L.m + (k-1)*(L.S+L.gap), L.m, L.S, L.S]);
 end
 
-function cb = sharedColorbar(ax, L, n)
-% colorbar of ax, placed right of the last montage and as tall as it
+function b = imageBox(ax)
+% [x y w h] (cm) of the image actually drawn in ax: with equal data aspect the
+% image fills the axes box in one direction only, centred in the other
+p = ax.Position;  dar = diff(ax.XLim)/diff(ax.YLim);
+if p(3)/p(4) > dar, h = p(4); w = h*dar; else, w = p(3); h = w/dar; end
+b = [p(1) + (p(3)-w)/2, p(2) + (p(4)-h)/2, w, h];
+end
+
+function cb = sharedColorbar(ax, L)
+% colorbar of ax, right of its montage and exactly as tall as the image
 cb = colorbar(ax);
 cb.Units = 'centimeters';
-cb.Position = [L.m + n*L.S + (n-1)*L.gap + L.cbGap, L.m, L.cbW, L.S];
+b = imageBox(ax);
+cb.Position = [b(1) + b(3) + L.cbGap, b(2), L.cbW, b(4)];
+end
+
+function jointTitle(fig, axs, txt)
+% bold title centred over the montages, just above the image tops
+b1 = imageBox(axs(1));  b2 = imageBox(axs(end));
+xc = (b1(1) + b2(1) + b2(3))/2;  top = max(b1(2)+b1(4), b2(2)+b2(4));
+a = annotation(fig,'textbox','String',txt,'FontWeight','bold','EdgeColor','none', ...
+    'Margin',0,'HorizontalAlignment','center','VerticalAlignment','bottom');
+a.Units = 'centimeters';
+a.Position = [xc-5, top+0.08, 10, 0.6];
 end
 
 function exportPanel(fig, fname, fontSz)
